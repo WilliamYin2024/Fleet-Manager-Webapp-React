@@ -8,11 +8,13 @@ import {useEffect, useState} from "react";
 let DefaultIcon = L.icon({
 	iconUrl: icon,
 	shadowUrl: iconShadow,
+	iconSize: [35, 46],
+	iconAnchor: [17, 46]
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const VehicleOverlayComponent = () => {
+const VehicleOverlayComponent = (trackVehicle) => {
 	const [vehicleData, setVehicleData] = useState([]);
 
 	useEffect(() => {
@@ -26,13 +28,11 @@ const VehicleOverlayComponent = () => {
 						for (const i in updatedData) {
 							if (updatedData[i].name === item.name) {
 								updatedData[i] = {...item, history: updatedData[i].history};
-								if (!updatedData[i].history.find(coords => coords === [item.lat, item.lng])){
-									updatedData[i].history.push([item.lat, item.lng]);
-								}
+								updatedData[i].history.add([item.lat, item.lng]);
 								return;
 							}
 						}
-						updatedData.push({...item, history: [[item.lat, item.lng]]});
+						updatedData.push({...item, history: new Set([[item.lat, item.lng]])});
 					});
 					return updatedData;
 				});
@@ -42,25 +42,22 @@ const VehicleOverlayComponent = () => {
 		};
 
 		fetchData();
-		// const intervalId = setInterval(fetchData, 100);
-		// return () => clearInterval(intervalId);
+		const intervalId = setInterval(fetchData, 100);
+		return () => clearInterval(intervalId);
 	}, []);
 
-	const vehicleMarkers = vehicleData.map((vehicle) => {
-		console.log(vehicle.history)
+	return vehicleData.map((vehicle) => {
 		return (
-			<div key={vehicle.name}>
+			trackVehicle.trackVehicle[vehicle.name] && <div key={vehicle.name}>
 				<Marker position={[vehicle.lat, vehicle.lng]}>
 					<Popup>
 						{vehicle.name}
 					</Popup>
 				</Marker>
-				<Polyline positions={[[43.678138448, -79.349298308], [43.67814288575, -79.34927715387501]]} color='green'/>
+				<Polyline positions={Array.from(vehicle.history)} color='green'/>
 			</div>
 		);
 	});
-
-	return vehicleMarkers;
 };
 
 export default VehicleOverlayComponent;
