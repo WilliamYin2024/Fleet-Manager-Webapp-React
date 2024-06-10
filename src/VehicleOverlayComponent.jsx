@@ -22,17 +22,21 @@ const VehicleOverlayComponent = (trackVehicle) => {
 			try {
 				const response = await fetch('http://localhost:8080/vehicles/');
 				const json = await response.json();
+				const vehicleHistories = {};
+				for (const item of json) {
+					const historyResponse = await fetch(`http://localhost:8080/history/${item.name}`);
+					vehicleHistories[item.name] = await historyResponse.json();
+				}
 				setVehicleData(prevData => {
 					const updatedData = [...prevData];
 					json.forEach((item) => {
 						for (const i in updatedData) {
 							if (updatedData[i].name === item.name) {
-								updatedData[i] = {...item, history: updatedData[i].history};
-								updatedData[i].history.add([item.lat, item.lng]);
+								updatedData[i] = {...item, history: vehicleHistories[item.name]};
 								return;
 							}
 						}
-						updatedData.push({...item, history: new Set([[item.lat, item.lng]])});
+						updatedData.push({...item, history: vehicleHistories[item.name]});
 					});
 					return updatedData;
 				});
