@@ -21,11 +21,11 @@ const VehicleOverlayComponent = (trackVehicle) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch(`${API_URL}/vehicles/`);
+				const response = await fetch(`${API_URL}:8080/vehicles/`);
 				const json = await response.json();
 				const vehicleHistories = {};
 				for (const item of json) {
-					const historyResponse = await fetch(`${API_URL}/history/${item.name}`);
+					const historyResponse = await fetch(`${API_URL}:8080/history/${item.name}`);
 					vehicleHistories[item.name] = await historyResponse.json();
 				}
 				setVehicleData(prevData => {
