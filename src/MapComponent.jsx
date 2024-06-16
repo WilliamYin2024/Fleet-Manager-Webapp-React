@@ -13,7 +13,7 @@ const MapComponent = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch(`${API_URL}vehicles/`);
+				const response = await fetch(`${API_URL}/vehicles/`);
 				const json = await response.json();
 				setTrackVehicle(prevData => {
 					const updatedData = {...prevData};
