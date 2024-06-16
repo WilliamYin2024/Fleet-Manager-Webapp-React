@@ -4,6 +4,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import {Marker, Polyline, Popup} from "react-leaflet";
 import {useEffect, useState} from "react";
+import API_URL from "./Config.js";
 
 let DefaultIcon = L.icon({
 	iconUrl: icon,
@@ -20,11 +21,11 @@ const VehicleOverlayComponent = (trackVehicle) => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch('http://localhost:8080/vehicles/');
+				const response = await fetch(`${API_URL}vehicles/`);
 				const json = await response.json();
 				const vehicleHistories = {};
 				for (const item of json) {
-					const historyResponse = await fetch(`http://localhost:8080/history/${item.name}`);
+					const historyResponse = await fetch(`${API_URL}history/${item.name}`);
 					vehicleHistories[item.name] = await historyResponse.json();
 				}
 				setVehicleData(prevData => {

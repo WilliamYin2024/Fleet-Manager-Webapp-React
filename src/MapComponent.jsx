@@ -5,6 +5,7 @@ import L from 'leaflet';
 import VehicleOverlayComponent from "./VehicleOverlayComponent.jsx";
 import {useEffect, useState} from "react";
 import {Menu, MenuItem, Sidebar} from "react-pro-sidebar";
+import API_URL from "./Config.js";
 
 const MapComponent = () => {
 	const [trackVehicle, setTrackVehicle] = useState({});
@@ -12,7 +13,7 @@ const MapComponent = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch('http://localhost:8080/vehicles/');
+				const response = await fetch(`${API_URL}vehicles/`);
 				const json = await response.json();
 				setTrackVehicle(prevData => {
 					const updatedData = {...prevData};
